@@ -13,7 +13,6 @@ title_font = pygame.font.Font('arial.ttf', 40)
 # Configuración global del juego
 BLOCK_SIZE = 20
 SPEED_OPTIONS = [10, 15, 20, 25, 30]  # Opciones de velocidad (dificultad)
-SPEED = SPEED_OPTIONS[2]  # Velocidad por defecto (nivel medio)
 TIMER_SECONDS = 3
 MAX_ATTEMPTS = 6  # Máximo número de intentos
 
@@ -125,6 +124,7 @@ class SnakeGame:
         self.game_state = GameState.MENU
         self.attempts_remaining = MAX_ATTEMPTS
         self.selected_speed_index = 2  # Índice medio por defecto
+        self.speed = SPEED_OPTIONS[self.selected_speed_index]  # Establecer velocidad inicial
         self.selected_color_index = 0  # Color por defecto (Azul)
         
         # Crear fondo con cuadrícula
@@ -380,8 +380,7 @@ class SnakeGame:
             
             if mouse_click and button.is_clicked(mouse_pos, True):
                 self.selected_speed_index = i
-                global SPEED
-                SPEED = SPEED_OPTIONS[i]
+                self.speed = SPEED_OPTIONS[i]  # Actualizar la velocidad en la instancia
         
         # Verificar interacción con botón de volver
         self.back_button.check_hover(mouse_pos)
@@ -875,7 +874,7 @@ class SnakeGame:
                 self.render_game_screen()
             
             # Ajustar velocidad según la dificultad seleccionada
-            self.clock.tick(SPEED)
+            self.clock.tick(self.speed)  # Usar la velocidad de la instancia
         
         return True
 
