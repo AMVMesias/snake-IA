@@ -15,7 +15,7 @@ Asegúrate de tener Python 3.11.9 instalado en tu sistema
 
 1. Instala las dependencias:
 ```
-pip install -r requirements.txt
+pip install -r librerias.txt
 ```
 
 2. Para jugar la versión manual:
