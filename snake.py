@@ -13,6 +13,7 @@ title_font = pygame.font.Font('arial.ttf', 40)
 # Configuración global del juego
 BLOCK_SIZE = 20
 SPEED_OPTIONS = [10, 15, 20, 25, 30]  # Opciones de velocidad (dificultad)
+SPEED = SPEED_OPTIONS[2]  # Velocidad por defecto (nivel medio)
 TIMER_SECONDS = 3
 MAX_ATTEMPTS = 6  # Máximo número de intentos
 
@@ -124,7 +125,6 @@ class SnakeGame:
         self.game_state = GameState.MENU
         self.attempts_remaining = MAX_ATTEMPTS
         self.selected_speed_index = 2  # Índice medio por defecto
-        self.speed = SPEED_OPTIONS[self.selected_speed_index]  # Establecer velocidad inicial
         self.selected_color_index = 0  # Color por defecto (Azul)
         
         # Crear fondo con cuadrícula
@@ -217,6 +217,10 @@ class SnakeGame:
         # Resetear game_over
         self.game_over = False
         
+        # Asegurar que se usa la velocidad seleccionada
+        global SPEED
+        SPEED = SPEED_OPTIONS[self.selected_speed_index]
+    
     def generate_food(self):
         """
         Genera una nueva pieza de comida en una posición aleatoria.
@@ -377,23 +381,17 @@ class SnakeGame:
         for i, button in enumerate(self.difficulty_buttons):
             button.check_hover(mouse_pos)
             button.draw(self.display)
-            
             if mouse_click and button.is_clicked(mouse_pos, True):
-                self.selected_speed_index = i
-                self.speed = SPEED_OPTIONS[i]  # Actualizar la velocidad en la instancia
+                self.selected_speed_index = i  # Actualiza el índice de velocidad seleccionada
+                global SPEED
+                SPEED = SPEED_OPTIONS[self.selected_speed_index]  # Actualiza la velocidad global
+                self.game_state = GameState.MENU  # Regresa al menú principal
         
-        # Verificar interacción con botón de volver
+        # Dibujar botón de volver
         self.back_button.check_hover(mouse_pos)
         self.back_button.draw(self.display)
-        
         if mouse_click and self.back_button.is_clicked(mouse_pos, True):
-            self.game_state = GameState.MENU
-        
-        # Mostrar la dificultad actual seleccionada
-        current_difficulty = f"{'Muy fácil' if self.selected_speed_index == 0 else 'Fácil' if self.selected_speed_index == 1 else 'Normal' if self.selected_speed_index == 2 else 'Difícil' if self.selected_speed_index == 3 else 'Muy difícil'}"
-        difficulty_text = font.render(f"Dificultad actual: {current_difficulty}", True, WHITE)
-        difficulty_rect = difficulty_text.get_rect(center=(self.w // 2, 410))
-        self.display.blit(difficulty_text, difficulty_rect)
+            self.game_state = GameState.MENU  # Regresa al menú principal
         
         pygame.display.flip()
     
@@ -873,8 +871,10 @@ class SnakeGame:
                 # Renderizar pantalla de juego
                 self.render_game_screen()
             
-            # Ajustar velocidad según la dificultad seleccionada
-            self.clock.tick(self.speed)  # Usar la velocidad de la instancia
+            # Ajustar velocidad según la dificultad seleccionada actual
+            global SPEED
+            SPEED = SPEED_OPTIONS[self.selected_speed_index]
+            self.clock.tick(SPEED)
         
         return True
 
